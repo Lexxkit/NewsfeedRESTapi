@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
+import java.util.Set;
 import lombok.Data;
 
 @Entity
@@ -18,5 +18,5 @@ public class Category {
   private Long id;
   private String name;
   @OneToMany(mappedBy = "category")
-  private List<NewsArticle> newsArticles;
+  private Set<NewsArticle> newsArticles;
 }
