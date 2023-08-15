@@ -19,7 +19,7 @@ public class NewsArticle {
   private Long id;
   private String name;
   private String content;
-  private LocalDate published_at;
+  private LocalDate publishedAt;
 
   @ManyToOne
   @JoinColumn(name = "category_id", nullable = false)

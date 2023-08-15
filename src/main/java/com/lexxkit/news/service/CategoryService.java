@@ -1,6 +1,7 @@
 package com.lexxkit.news.service;
 
 import com.lexxkit.news.dto.CategoryDto;
+import com.lexxkit.news.exception.CategoryNotFoundException;
 import com.lexxkit.news.mapper.CategoryMapper;
 import com.lexxkit.news.repository.CategoryRepository;
 import java.util.List;
@@ -27,6 +28,7 @@ public class CategoryService {
   }
 
   public void deleteCategory(long id) {
-    categoryRepository.delete(categoryRepository.findById(id).orElseThrow());
+    categoryRepository.delete(categoryRepository.findById(id).orElseThrow(
+        () -> new CategoryNotFoundException("There is no category with id: " + id)));
   }
 }
