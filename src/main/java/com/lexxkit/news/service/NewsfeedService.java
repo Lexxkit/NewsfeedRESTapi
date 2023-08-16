@@ -10,8 +10,9 @@ import com.lexxkit.news.mapper.NewsArticleMapper;
 import com.lexxkit.news.repository.CategoryRepository;
 import com.lexxkit.news.repository.NewsfeedRepository;
 import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,8 +23,8 @@ public class NewsfeedService {
   private final CategoryRepository categoryRepository;
   private final NewsArticleMapper newsArticleMapper;
 
-  public List<NewsArticleDto> getNewsfeed() {
-    return newsArticleMapper.toNewsArticleDtoList(newsfeedRepository.findAll());
+  public Page<NewsArticleDto> getNewsfeed(Pageable pageable) {
+    return newsfeedRepository.findAll(pageable).map(newsArticleMapper::toNewsArticleDto);
   }
 
   public NewsArticleDto createNewsArticle(CreateNewsArticleDto createNewsArticleDto) {
