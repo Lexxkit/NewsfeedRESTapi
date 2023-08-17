@@ -87,7 +87,7 @@ public class NewsfeedService {
 
   /**
    * Delete news article from DB
-   * @param id id number of an article to update to delete
+   * @param id id number of an article to delete
    */
   public void deleteNewsArticle(long id) {
     newsfeedRepository.deleteById(id);
