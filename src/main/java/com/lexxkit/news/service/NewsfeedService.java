@@ -28,43 +28,22 @@ public class NewsfeedService {
   private final CategoryRepository categoryRepository;
   private final NewsArticleMapper newsArticleMapper;
 
+  /**
+   *Get all news articles from DB split by pages with desired size.
+   * @param pageable contains page size and number of page
+   * @return {@link Page} of {@link NewsArticleDto} objects
+   */
   public Page<NewsArticleDto> getNewsfeed(Pageable pageable) {
     return newsfeedRepository.findAll(pageable).map(newsArticleMapper::toNewsArticleDto);
   }
 
-  public NewsArticleDto createNewsArticle(CreateNewsArticleDto createNewsArticleDto) {
-    NewsArticle newsArticle = newsArticleMapper.toNewsArticle(createNewsArticleDto);
-    Category category = getCategory(createNewsArticleDto);
-    newsArticle.setCategory(category);
-    newsArticle.setPublishedAt(LocalDate.now());
-    return newsArticleMapper.toNewsArticleDto(newsfeedRepository.save(newsArticle));
-  }
-
-  public NewsArticleDto updateNewsArticle(long id, CreateNewsArticleDto createNewsArticleDto) {
-    NewsArticle oldArticle = newsfeedRepository.findById(id).orElseThrow(
-        () -> new NewsArticleNotFoundException("There is no article with id: " + id)
-    );
-    if (!oldArticle.getCategory().getName().equals(createNewsArticleDto.getName())) {
-      Category category = getCategory(createNewsArticleDto);
-      oldArticle.setCategory(category);
-    }
-    oldArticle.setName(createNewsArticleDto.getName());
-    oldArticle.setContent(createNewsArticleDto.getContent());
-    return newsArticleMapper.toNewsArticleDto(newsfeedRepository.save(oldArticle));
-  }
-
-  public void deleteNewsArticle(long id) {
-    newsfeedRepository.deleteById(id);
-  }
-
-  private Category getCategory(CreateNewsArticleDto createNewsArticleDto) {
-    return categoryRepository
-        .findByName(createNewsArticleDto.getCategory()).orElseThrow(
-            () -> new CategoryNotFoundException(
-                "There is no category with name: " + createNewsArticleDto.getCategory()
-            ));
-  }
-
+  /**
+   * Get all articles filtered by category, name, and content.
+   * @param category name of category
+   * @param name string to search by {@link NewsArticle} name
+   * @param content string to search by {@link NewsArticle content
+   * @return
+   */
   public List<NewsArticleDto> getFilteredNewsfeed(String category, String name, String content) {
     List<NewsArticle> articles = newsfeedRepository.findAll(
         byNameLike(name)
@@ -72,5 +51,59 @@ public class NewsfeedService {
             .or(byCategoryEquals(category))
     );
     return newsArticleMapper.toDtoList(articles);
+  }
+
+  /**
+   * Save new {@link NewsArticle} to DB.
+   * @param createNewsArticleDto {@link CreateNewsArticleDto} instance
+   * @return save {@link NewsArticle} mapped to {@link NewsArticleDto}
+   */
+  public NewsArticleDto createNewsArticle(CreateNewsArticleDto createNewsArticleDto) {
+    NewsArticle newsArticle = newsArticleMapper.toNewsArticle(createNewsArticleDto);
+    Category category = getCategoryByName(createNewsArticleDto.getName());
+    newsArticle.setCategory(category);
+    newsArticle.setPublishedAt(LocalDate.now());
+    return newsArticleMapper.toNewsArticleDto(newsfeedRepository.save(newsArticle));
+  }
+
+  /**
+   * Update info in an existent {@link NewsArticle}.
+   * @param id id number of an article to update
+   * @param createNewsArticleDto {@link CreateNewsArticleDto} instance with new info
+   * @return {@link NewsArticleDto} with updated info
+   */
+  public NewsArticleDto updateNewsArticle(long id, CreateNewsArticleDto createNewsArticleDto) {
+    NewsArticle oldArticle = newsfeedRepository.findById(id).orElseThrow(
+        () -> new NewsArticleNotFoundException("There is no article with id: " + id)
+    );
+    if (!oldArticle.getCategory().getName().equals(createNewsArticleDto.getName())) {
+      Category category = getCategoryByName(createNewsArticleDto.getCategory());
+      oldArticle.setCategory(category);
+    }
+    oldArticle.setName(createNewsArticleDto.getName());
+    oldArticle.setContent(createNewsArticleDto.getContent());
+    return newsArticleMapper.toNewsArticleDto(newsfeedRepository.save(oldArticle));
+  }
+
+  /**
+   * Delete news article from DB
+   * @param id id number of an article to update to delete
+   */
+  public void deleteNewsArticle(long id) {
+    newsfeedRepository.deleteById(id);
+  }
+
+  /**
+   * Check if DB contains category from {@link CreateNewsArticleDto} or throw a RuntimeException.
+   * @param categoryName name of category
+   * @return {@link Category} instance
+   * @throws CategoryNotFoundException if category was not found by its name
+   */
+  private Category getCategoryByName(String categoryName) {
+    return categoryRepository
+        .findByName(categoryName).orElseThrow(
+            () -> new CategoryNotFoundException(
+                "There is no category with name: " + categoryName
+            ));
   }
 }

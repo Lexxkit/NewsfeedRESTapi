@@ -32,8 +32,8 @@ public class NewsfeedController {
   private final NewsfeedService newsfeedService;
 
   @Operation(
-      summary = "Get a list of all articles",
-      description = "Returns newsfeed",
+      summary = "Get a list of all articles with desired size and page number",
+      description = "Returns desired page of newsfeed",
       responses = {
           @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
           @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
@@ -47,15 +47,20 @@ public class NewsfeedController {
     return newsfeedService.getNewsfeed(PageRequest.of(page, pageSize));
   }
 
+  @Operation(
+      summary = "Get a list of articles filtered by desired criteria",
+      description = "Returns newsfeed with filtered articles",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
+          @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+      }
+  )
   @GetMapping("/search")
-  public List<NewsArticleDto> getNewsArticledByCriteria(
+  public List<NewsArticleDto> getNewsArticlesByCriteria(
       @RequestParam(required = false) String category,
       @RequestParam(required = false) String name,
       @RequestParam(required = false) String content
   ) {
-//    if (category.isBlank() && name.isBlank() && content.isBlank()){
-//      return getNewsArticles(null, null);
-//    }
     return newsfeedService.getFilteredNewsfeed(category, name, content);
   }
 
