@@ -60,7 +60,7 @@ public class NewsfeedService {
    */
   public NewsArticleDto createNewsArticle(CreateNewsArticleDto createNewsArticleDto) {
     NewsArticle newsArticle = newsArticleMapper.toNewsArticle(createNewsArticleDto);
-    Category category = getCategoryByName(createNewsArticleDto.getName());
+    Category category = getCategoryByName(createNewsArticleDto.getCategory());
     newsArticle.setCategory(category);
     newsArticle.setPublishedAt(LocalDate.now());
     return newsArticleMapper.toNewsArticleDto(newsfeedRepository.save(newsArticle));
