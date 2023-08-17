@@ -47,8 +47,8 @@ public class NewsfeedService {
   public List<NewsArticleDto> getFilteredNewsfeed(String category, String name, String content) {
     List<NewsArticle> articles = newsfeedRepository.findAll(
         byNameLike(name)
-            .or(byContentLike(content))
-            .or(byCategoryEquals(category))
+            .and(byContentLike(content))
+            .and(byCategoryEquals(category))
     );
     return newsArticleMapper.toDtoList(articles);
   }
