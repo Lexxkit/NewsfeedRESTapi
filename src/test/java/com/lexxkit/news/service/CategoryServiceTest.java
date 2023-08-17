@@ -30,7 +30,7 @@ public class CategoryServiceTest {
   @Mock
   private CategoryRepository categoryRepository;
   @Spy
-  private CategoryMapper adsMapper = new CategoryMapperImpl();
+  private CategoryMapper categoryMapper = new CategoryMapperImpl();
   @InjectMocks
   private CategoryService out;
 
