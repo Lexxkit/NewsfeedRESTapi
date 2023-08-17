@@ -17,7 +17,7 @@ In IDE:
 #### Stack
 ```
 Java 17
-Spring Boot 2
+Spring Boot 3
 Hibernate
 PostreSQL
 Criteria API
