@@ -1,5 +1,9 @@
 package com.lexxkit.news.service;
 
+import static com.lexxkit.news.repository.NewsfeedRepository.Specs.byCategoryEquals;
+import static com.lexxkit.news.repository.NewsfeedRepository.Specs.byContentLike;
+import static com.lexxkit.news.repository.NewsfeedRepository.Specs.byNameLike;
+
 import com.lexxkit.news.dto.CreateNewsArticleDto;
 import com.lexxkit.news.dto.NewsArticleDto;
 import com.lexxkit.news.entity.Category;
@@ -10,6 +14,7 @@ import com.lexxkit.news.mapper.NewsArticleMapper;
 import com.lexxkit.news.repository.CategoryRepository;
 import com.lexxkit.news.repository.NewsfeedRepository;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,5 +63,14 @@ public class NewsfeedService {
             () -> new CategoryNotFoundException(
                 "There is no category with name: " + createNewsArticleDto.getCategory()
             ));
+  }
+
+  public List<NewsArticleDto> getFilteredNewsfeed(String category, String name, String content) {
+    List<NewsArticle> articles = newsfeedRepository.findAll(
+        byNameLike(name)
+            .or(byContentLike(content))
+            .or(byCategoryEquals(category))
+    );
+    return newsArticleMapper.toDtoList(articles);
   }
 }

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,6 +45,18 @@ public class NewsfeedController {
       @RequestParam(defaultValue = "0", required = false) Integer page
   ) {
     return newsfeedService.getNewsfeed(PageRequest.of(page, pageSize));
+  }
+
+  @GetMapping("/search")
+  public List<NewsArticleDto> getNewsArticledByCriteria(
+      @RequestParam(required = false) String category,
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) String content
+  ) {
+//    if (category.isBlank() && name.isBlank() && content.isBlank()){
+//      return getNewsArticles(null, null);
+//    }
+    return newsfeedService.getFilteredNewsfeed(category, name, content);
   }
 
   @Operation(
