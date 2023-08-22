@@ -10,19 +10,19 @@ services:
     image: newsfeed:v1
     restart: no
     ports:
-      - "8080:8080"
+      - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/newsfeed
-      SPRING_DATASOURCE_USERNAME: sa
-      SPRING_DATASOURCE_PASSWORD: 12345
-      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
 
   postgres:
     image: postgres:latest
     container_name: newsfeed-db
     ports:
-      - "5433:5432"
+      - ${POSTGRES_LOCAL_PORT}:${POSTGRES_DOCKER_PORT}
     environment:
-      POSTGRES_USER: sa
-      POSTGRES_PASSWORD: 12345
-      POSTGRES_DB: newsfeed
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
