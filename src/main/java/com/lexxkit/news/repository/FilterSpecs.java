@@ -3,7 +3,7 @@ package com.lexxkit.news.repository;
 import com.lexxkit.news.entity.NewsArticle;
 import org.springframework.data.jpa.domain.Specification;
 
-public interface Specs {
+public interface FilterSpecs {
 
   static Specification<NewsArticle> byNameLike(String name) {
     return (root, query, criteriaBuilder) -> {

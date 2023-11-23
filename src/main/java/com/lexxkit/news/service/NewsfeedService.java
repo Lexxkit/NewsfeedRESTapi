@@ -1,8 +1,8 @@
 package com.lexxkit.news.service;
 
-import static com.lexxkit.news.repository.Specs.byCategoryEquals;
-import static com.lexxkit.news.repository.Specs.byContentLike;
-import static com.lexxkit.news.repository.Specs.byNameLike;
+import static com.lexxkit.news.repository.FilterSpecs.byCategoryEquals;
+import static com.lexxkit.news.repository.FilterSpecs.byContentLike;
+import static com.lexxkit.news.repository.FilterSpecs.byNameLike;
 
 import com.lexxkit.news.dto.CreateNewsArticleDto;
 import com.lexxkit.news.dto.NewsArticleDto;
