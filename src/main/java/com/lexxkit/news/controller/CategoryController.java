@@ -42,7 +42,7 @@ public class CategoryController {
 
   @Operation(
       summary = "Create new category",
-      description = "Returns created category",
+      description = "Returns created category id",
       responses = {
           @ApiResponse(responseCode = "201", description = "Successfully created"),
           @ApiResponse(responseCode = "400", description = "Bad request - check your request body"),
@@ -50,8 +50,8 @@ public class CategoryController {
       }
   )
   @PostMapping
-  public ResponseEntity<CategoryDto> createCategory(@RequestBody @Valid CategoryDto categoryDto) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryDto));
+  public ResponseEntity<Long> createCategory(@RequestBody @Valid CategoryDto categoryDto) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryDto).getId());
   }
 
   @Operation(

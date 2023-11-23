@@ -66,7 +66,7 @@ public class NewsfeedController {
 
   @Operation(
       summary = "Create new article",
-      description = "Returns created article",
+      description = "Returns created article id",
       responses = {
           @ApiResponse(responseCode = "201", description = "Successfully created"),
           @ApiResponse(responseCode = "400", description = "Bad request - check your request body"),
@@ -74,15 +74,15 @@ public class NewsfeedController {
       }
   )
   @PostMapping
-  public ResponseEntity<NewsArticleDto> createNewsArticle(
+  public ResponseEntity<Long> createNewsArticle(
       @RequestBody CreateNewsArticleDto createNewsArticleDto) {
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(newsfeedService.createNewsArticle(createNewsArticleDto));
+        .body(newsfeedService.createNewsArticle(createNewsArticleDto).getId());
   }
 
   @Operation(
       summary = "Update article",
-      description = "Returns article with updated info",
+      description = "Patch article with new info",
       responses = {
           @ApiResponse(responseCode = "200", description = "Successfully updated"),
           @ApiResponse(responseCode = "400", description = "Bad request - check your request body"),
@@ -91,9 +91,10 @@ public class NewsfeedController {
       }
   )
   @PatchMapping("/{id}")
-  public NewsArticleDto updateNewsArticle(@PathVariable long id,
+  public ResponseEntity<Void> updateNewsArticle(@PathVariable long id,
       @RequestBody CreateNewsArticleDto createNewsArticleDto) {
-    return newsfeedService.updateNewsArticle(id, createNewsArticleDto);
+    newsfeedService.updateNewsArticle(id, createNewsArticleDto);
+    return ResponseEntity.ok().build();
   }
 
   @Operation(
