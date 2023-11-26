@@ -1,7 +1,10 @@
 package com.lexxkit.news.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,10 +12,12 @@ import static org.mockito.Mockito.when;
 
 import com.lexxkit.news.dto.CategoryDto;
 import com.lexxkit.news.entity.Category;
+import com.lexxkit.news.exception.CategoryNotFoundException;
 import com.lexxkit.news.mapper.CategoryMapper;
 import com.lexxkit.news.mapper.CategoryMapperImpl;
 import com.lexxkit.news.repository.CategoryRepository;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -76,5 +81,31 @@ public class CategoryServiceTest {
 
     //then
     verify(categoryRepository, times(1)).deleteById(anyLong());
+  }
+
+  @Test
+  void shouldReturnCategory_whenFoundInRepoByName() {
+    //given
+    Category testCategory = new Category();
+    testCategory.setName("TEST");
+    when(categoryRepository.findByName(any())).thenReturn(Optional.of(testCategory));
+
+    //when
+    Category result = out.getCategoryByName(testCategory.getName());
+
+    //then
+    assertThat(result).isNotNull();
+    assertThat(result).isInstanceOf(Category.class);
+    assertThat(result).isEqualTo(testCategory);
+  }
+
+  @Test
+  void shouldThrowException_whenCategoryWithNameNotFound() {
+    //given
+    when(categoryRepository.findByName(anyString())).thenReturn(Optional.empty());
+
+    //then
+    assertThatExceptionOfType(CategoryNotFoundException.class)
+        .isThrownBy(() -> out.getCategoryByName(anyString()));
   }
 }

@@ -11,7 +11,6 @@ import com.lexxkit.news.entity.NewsArticle;
 import com.lexxkit.news.exception.CategoryNotFoundException;
 import com.lexxkit.news.exception.NewsArticleNotFoundException;
 import com.lexxkit.news.mapper.NewsArticleMapper;
-import com.lexxkit.news.repository.CategoryRepository;
 import com.lexxkit.news.repository.NewsfeedRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class NewsfeedService {
 
   private final NewsfeedRepository newsfeedRepository;
-  private final CategoryRepository categoryRepository;
+  private final CategoryService categoryService;
   private final NewsArticleMapper newsArticleMapper;
 
   /**
@@ -60,7 +59,7 @@ public class NewsfeedService {
    */
   public NewsArticleDto createNewsArticle(CreateNewsArticleDto createNewsArticleDto) {
     NewsArticle newsArticle = newsArticleMapper.toNewsArticle(createNewsArticleDto);
-    Category category = getCategoryByName(createNewsArticleDto.getCategory());
+    Category category = categoryService.getCategoryByName(createNewsArticleDto.getCategory());
     newsArticle.setCategory(category);
     newsArticle.setPublishedAt(LocalDate.now());
     return newsArticleMapper.toNewsArticleDto(newsfeedRepository.save(newsArticle));
@@ -77,7 +76,7 @@ public class NewsfeedService {
         () -> new NewsArticleNotFoundException("There is no article with id: " + id)
     );
     if (!oldArticle.getCategory().getName().equals(createNewsArticleDto.getCategory())) {
-      Category category = getCategoryByName(createNewsArticleDto.getCategory());
+      Category category = categoryService.getCategoryByName(createNewsArticleDto.getCategory());
       oldArticle.setCategory(category);
     }
     oldArticle.setName(createNewsArticleDto.getName());
@@ -99,11 +98,4 @@ public class NewsfeedService {
    * @return {@link Category} instance
    * @throws CategoryNotFoundException if category was not found by its name
    */
-  private Category getCategoryByName(String categoryName) {
-    return categoryRepository
-        .findByName(categoryName).orElseThrow(
-            () -> new CategoryNotFoundException(
-                "There is no category with name: " + categoryName
-            ));
-  }
 }

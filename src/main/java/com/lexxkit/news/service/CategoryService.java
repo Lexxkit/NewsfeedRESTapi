@@ -1,6 +1,7 @@
 package com.lexxkit.news.service;
 
 import com.lexxkit.news.dto.CategoryDto;
+import com.lexxkit.news.entity.Category;
 import com.lexxkit.news.exception.CategoryNotFoundException;
 import com.lexxkit.news.mapper.CategoryMapper;
 import com.lexxkit.news.repository.CategoryRepository;
@@ -43,5 +44,13 @@ public class CategoryService {
    */
   public void deleteCategory(long id) {
     categoryRepository.deleteById(id);
+  }
+
+  public Category getCategoryByName(String categoryName) {
+    return categoryRepository
+        .findByName(categoryName).orElseThrow(
+            () -> new CategoryNotFoundException(
+                "There is no category with name: " + categoryName
+            ));
   }
 }

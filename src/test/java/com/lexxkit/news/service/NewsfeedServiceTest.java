@@ -16,8 +16,8 @@ import com.lexxkit.news.entity.NewsArticle;
 import com.lexxkit.news.exception.NewsArticleNotFoundException;
 import com.lexxkit.news.mapper.NewsArticleMapper;
 import com.lexxkit.news.mapper.NewsArticleMapperImpl;
-import com.lexxkit.news.repository.CategoryRepository;
 import com.lexxkit.news.repository.NewsfeedRepository;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -30,12 +30,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 @ExtendWith(MockitoExtension.class)
 class NewsfeedServiceTest {
 
   @Mock
-  private CategoryRepository categoryRepository;
+  private CategoryService categoryService;
   @Mock
   private NewsfeedRepository newsfeedRepository;
   @Spy
@@ -77,8 +78,7 @@ class NewsfeedServiceTest {
     testInitDto.setCategory("TEST");
     Category testCategory = new Category();
     testCategory.setName("TEST");
-    when(categoryRepository.findByName(testCategory.getName())).thenReturn(
-        Optional.of(testCategory));
+    when(categoryService.getCategoryByName(testCategory.getName())).thenReturn(testCategory);
     when(newsfeedRepository.save(any())).thenReturn(new NewsArticle());
 
     //when
@@ -139,5 +139,19 @@ class NewsfeedServiceTest {
 
     //then
     verify(newsfeedRepository, times(1)).deleteById(anyLong());
+  }
+
+  @Test
+  void shouldReturnEmptyList_whenFilterNewsWithNullParams() {
+    //given
+    when(newsfeedRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
+
+    //when
+    List<NewsArticleDto> result = out.getFilteredNewsfeed(null, null, null);
+
+    //then
+    assertThat(result).isNotNull();
+    assertThat(result).isInstanceOf(List.class);
+    assertThat(result.size()).isEqualTo(0);
   }
 }
