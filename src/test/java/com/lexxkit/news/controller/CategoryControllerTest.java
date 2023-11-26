@@ -2,6 +2,7 @@ package com.lexxkit.news.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -9,6 +10,7 @@ import com.lexxkit.news.mapper.CategoryMapperImpl;
 import com.lexxkit.news.repository.CategoryRepository;
 import com.lexxkit.news.service.CategoryService;
 import java.util.Collections;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -46,5 +48,18 @@ class CategoryControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(content().json("[]"));
+  }
+
+  @Test
+  void shouldFail_whenCreateCategoryNotValid() throws Exception {
+    JSONObject testCategoryObject = new JSONObject();
+    testCategoryObject.put("name", " ");
+
+
+    mockMvc.perform(post("/categories")
+        .content(testCategoryObject.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
   }
 }
