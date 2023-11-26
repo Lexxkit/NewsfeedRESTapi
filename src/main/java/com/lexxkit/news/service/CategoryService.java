@@ -1,7 +1,6 @@
 package com.lexxkit.news.service;
 
 import com.lexxkit.news.dto.CategoryDto;
-import com.lexxkit.news.dto.CreateNewsArticleDto;
 import com.lexxkit.news.entity.Category;
 import com.lexxkit.news.exception.CategoryNotFoundException;
 import com.lexxkit.news.mapper.CategoryMapper;

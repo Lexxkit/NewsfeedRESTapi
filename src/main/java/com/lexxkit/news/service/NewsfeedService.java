@@ -8,7 +8,6 @@ import com.lexxkit.news.dto.CreateNewsArticleDto;
 import com.lexxkit.news.dto.NewsArticleDto;
 import com.lexxkit.news.entity.Category;
 import com.lexxkit.news.entity.NewsArticle;
-import com.lexxkit.news.exception.CategoryNotFoundException;
 import com.lexxkit.news.exception.NewsArticleNotFoundException;
 import com.lexxkit.news.mapper.NewsArticleMapper;
 import com.lexxkit.news.repository.NewsfeedRepository;
