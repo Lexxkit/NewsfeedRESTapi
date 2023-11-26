@@ -1,6 +1,7 @@
 package com.lexxkit.news.service;
 
 import com.lexxkit.news.dto.CategoryDto;
+import com.lexxkit.news.dto.CreateNewsArticleDto;
 import com.lexxkit.news.entity.Category;
 import com.lexxkit.news.exception.CategoryNotFoundException;
 import com.lexxkit.news.mapper.CategoryMapper;
@@ -46,6 +47,12 @@ public class CategoryService {
     categoryRepository.deleteById(id);
   }
 
+  /**
+   * Check if DB contains category with specified name or throw a RuntimeException.
+   * @param categoryName name of category
+   * @return {@link Category} instance
+   * @throws CategoryNotFoundException if category was not found by its name
+   */
   public Category getCategoryByName(String categoryName) {
     return categoryRepository
         .findByName(categoryName).orElseThrow(

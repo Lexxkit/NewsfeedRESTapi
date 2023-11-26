@@ -91,11 +91,4 @@ public class NewsfeedService {
   public void deleteNewsArticle(long id) {
     newsfeedRepository.deleteById(id);
   }
-
-  /**
-   * Check if DB contains category from {@link CreateNewsArticleDto} or throw a RuntimeException.
-   * @param categoryName name of category
-   * @return {@link Category} instance
-   * @throws CategoryNotFoundException if category was not found by its name
-   */
 }
