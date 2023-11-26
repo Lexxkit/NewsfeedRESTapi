@@ -59,7 +59,6 @@ public class CategoryController {
       description = "Delete category by id",
       responses = {
           @ApiResponse(responseCode = "204", description = "Successfully deleted"),
-          @ApiResponse(responseCode = "404", description = "Not found - category not found"),
           @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
       }
   )

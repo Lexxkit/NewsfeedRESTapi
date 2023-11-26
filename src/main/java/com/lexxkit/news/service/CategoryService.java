@@ -40,7 +40,6 @@ public class CategoryService {
   /**
    * Delete category from DB.
    * @param id id number of a category to delete
-   * @throws CategoryNotFoundException if category was not found by its id
    */
   public void deleteCategory(long id) {
     categoryRepository.deleteById(id);
