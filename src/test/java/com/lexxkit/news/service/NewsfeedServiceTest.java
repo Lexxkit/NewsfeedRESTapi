@@ -1,15 +1,25 @@
 package com.lexxkit.news.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.lexxkit.news.dto.CreateNewsArticleDto;
 import com.lexxkit.news.dto.NewsArticleDto;
+import com.lexxkit.news.entity.Category;
 import com.lexxkit.news.entity.NewsArticle;
+import com.lexxkit.news.exception.NewsArticleNotFoundException;
 import com.lexxkit.news.mapper.NewsArticleMapper;
 import com.lexxkit.news.mapper.NewsArticleMapperImpl;
 import com.lexxkit.news.repository.CategoryRepository;
 import com.lexxkit.news.repository.NewsfeedRepository;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +48,7 @@ class NewsfeedServiceTest {
     //given
     List<NewsArticleDto> testListDto = List.of(new NewsArticleDto());
     List<NewsArticle> testList = List.of(new NewsArticle());
-    Pageable testPageable = PageRequest.of(1, 1);
+    Pageable testPageable = PageRequest.of(0, 1);
     Page<NewsArticleDto> testPageDto = new PageImpl<>(testListDto, testPageable, testList.size());
     Page<NewsArticle> testPage = new PageImpl<>(testList, testPageable, testList.size());
     when(newsfeedRepository.findAll(testPageable)).thenReturn(testPage);
@@ -59,14 +69,75 @@ class NewsfeedServiceTest {
   }
 
   @Test
-  void createNewsArticle() {
+  void shouldUseRepoSaveOnce_whenCreateNewsArticle() {
+    //given
+    CreateNewsArticleDto testInitDto = new CreateNewsArticleDto();
+    testInitDto.setName("Test");
+    testInitDto.setContent("Lorem ipsum");
+    testInitDto.setCategory("TEST");
+    Category testCategory = new Category();
+    testCategory.setName("TEST");
+    when(categoryRepository.findByName(testCategory.getName())).thenReturn(
+        Optional.of(testCategory));
+    when(newsfeedRepository.save(any())).thenReturn(new NewsArticle());
+
+    //when
+    NewsArticleDto result = out.createNewsArticle(testInitDto);
+
+    //then
+    verify(newsfeedRepository, times(1)).save(any());
+    assertThat(result).isNotNull();
+    assertThat(result).isInstanceOf(NewsArticleDto.class);
   }
 
   @Test
-  void updateNewsArticle() {
+  void shouldThrowException_whenUpdateNewsArticleWithIdNotFound() {
+    //given
+    when(newsfeedRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+    //then
+    assertThatExceptionOfType(NewsArticleNotFoundException.class)
+        .isThrownBy(() -> out.updateNewsArticle(anyLong(), new CreateNewsArticleDto()));
+    verify(newsfeedRepository, times(0)).save(any());
   }
 
   @Test
-  void deleteNewsArticle() {
+  void shouldUseRepoSaveOnce_whenUpdateNewsArticle() {
+    //given
+    CreateNewsArticleDto testInitDto = new CreateNewsArticleDto();
+    testInitDto.setName("Test");
+    testInitDto.setContent("Lorem ipsum");
+    testInitDto.setCategory("TEST");
+    Category testCategory = new Category();
+    testCategory.setName("TEST");
+    NewsArticle existingArticle = new NewsArticle();
+    existingArticle.setId(1L);
+    existingArticle.setName("Test old");
+    existingArticle.setContent("Old content");
+    existingArticle.setCategory(testCategory);
+
+    when(newsfeedRepository.findById(anyLong())).thenReturn(Optional.of(existingArticle));
+    NewsArticle mockOutput = newsArticleMapper.toNewsArticle(testInitDto);
+    when(newsfeedRepository.save(any())).thenReturn(mockOutput);
+
+    //when
+    NewsArticleDto result = out.updateNewsArticle(anyLong(), testInitDto);
+
+    //then
+    verify(newsfeedRepository, times(1)).save(any());
+    assertThat(result).isNotNull();
+    assertThat(result).isInstanceOf(NewsArticleDto.class);
+  }
+
+  @Test
+  void shouldUseRepoDeleteOnce_whenDeleteNewsArticle() {
+    //given
+    doNothing().when(newsfeedRepository).deleteById(anyLong());
+
+    //when
+    out.deleteNewsArticle(anyLong());
+
+    //then
+    verify(newsfeedRepository, times(1)).deleteById(anyLong());
   }
 }

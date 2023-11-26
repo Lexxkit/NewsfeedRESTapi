@@ -76,7 +76,7 @@ public class NewsfeedService {
     NewsArticle oldArticle = newsfeedRepository.findById(id).orElseThrow(
         () -> new NewsArticleNotFoundException("There is no article with id: " + id)
     );
-    if (!oldArticle.getCategory().getName().equals(createNewsArticleDto.getName())) {
+    if (!oldArticle.getCategory().getName().equals(createNewsArticleDto.getCategory())) {
       Category category = getCategoryByName(createNewsArticleDto.getCategory());
       oldArticle.setCategory(category);
     }

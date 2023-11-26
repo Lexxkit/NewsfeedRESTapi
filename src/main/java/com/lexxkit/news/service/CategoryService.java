@@ -42,7 +42,6 @@ public class CategoryService {
    * @throws CategoryNotFoundException if category was not found by its id
    */
   public void deleteCategory(long id) {
-    categoryRepository.delete(categoryRepository.findById(id).orElseThrow(
-        () -> new CategoryNotFoundException("There is no category with id: " + id)));
+    categoryRepository.deleteById(id);
   }
 }

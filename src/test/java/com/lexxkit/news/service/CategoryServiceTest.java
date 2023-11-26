@@ -1,7 +1,6 @@
 package com.lexxkit.news.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -10,17 +9,14 @@ import static org.mockito.Mockito.when;
 
 import com.lexxkit.news.dto.CategoryDto;
 import com.lexxkit.news.entity.Category;
-import com.lexxkit.news.exception.CategoryNotFoundException;
 import com.lexxkit.news.mapper.CategoryMapper;
 import com.lexxkit.news.mapper.CategoryMapperImpl;
 import com.lexxkit.news.repository.CategoryRepository;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -73,32 +69,12 @@ public class CategoryServiceTest {
   @Test
   void shouldUseRepoDeleteOnce_whenDeleteCategory() {
     //given
-    Category testCategory = new Category();
-    testCategory.setId(1L);
-    CategoryDto testCategoryDto = new CategoryDto();
-    testCategoryDto.setId(1L);
-    when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(testCategory));
-    doNothing().when(categoryRepository).delete(testCategory);
+    doNothing().when(categoryRepository).deleteById(anyLong());
 
     //when
-    out.deleteCategory(testCategory.getId());
+    out.deleteCategory(anyLong());
 
     //then
-    verify(categoryRepository, times(1)).delete(testCategory);
-  }
-
-  @Test
-  void shouldThrowCategoryNotFoundException_whenDeleteCategoryWithWrongId() {
-    //given
-    Category testCategory = new Category();
-    testCategory.setId(1L);
-    CategoryDto testCategoryDto = new CategoryDto();
-    testCategoryDto.setId(1L);
-    when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-    //then
-    assertThatExceptionOfType(CategoryNotFoundException.class)
-        .isThrownBy(() -> out.deleteCategory(testCategory.getId()));
-    verify(categoryRepository, Mockito.never()).delete(testCategory);
+    verify(categoryRepository, times(1)).deleteById(anyLong());
   }
 }
